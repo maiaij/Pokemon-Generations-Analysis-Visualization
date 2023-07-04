@@ -1,0 +1,512 @@
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60)
+)
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+poke_types <- select(pokemon_data, type, secondary)
+pokemon_data <- read.csv('Pokemon_full.csv') |> rename ('secondary' = 'secundary')
+View(pokemon_data)
+pokemon_data <- read.csv('Pokemon_full.csv') |> rename ('secondary_type' = 'secundary.type')
+tsw <- select(pokemon_data, type, speed, weight)
+final_table1 <- mutate(tsw %>% group_by(type) %>% summarise(avg_speed = mean(speed, na.rm=TRUE),
+avg_weight = mean(weight, na.rm=TRUE)),
+over_500 = if_else(avg_weight > 500, '>500', '<500'))
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+# The next graphic will display the amount amount of dragon Pokemon that have a
+# secondary type vs. those that do not. This will be done in the form of a pie chart.
+poke_types <- select(pokemon_data, type, secondary)
+pokemon_data <- read.csv('Pokemon_full.csv') |> rename ('secondary_type' = 'secundary.type')
+tsw <- select(pokemon_data, type, speed, weight)
+final_table1 <- mutate(tsw %>% group_by(type) %>% summarise(avg_speed = mean(speed, na.rm=TRUE),
+avg_weight = mean(weight, na.rm=TRUE)),
+over_500 = if_else(avg_weight > 500, '>500', '<500'))
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+# The next graphic will display the amount amount of dragon Pokemon that have a
+# secondary type vs. those that do not. This will be done in the form of a pie chart.
+poke_types <- select(pokemon_data, type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(type=='dragon'))
+View(data1)
+data1 <- mutate(poke_types %>% select(type=='dragon') %>% summarise())
+poke_types <- select(pokemon_data, group_by(type=='dragon'), secondary_type)
+poke_types <- select(pokemon_data, (type=='dragon'), secondary_type)
+poke_types <- select(pokemon_data, filter(type=='dragon'), secondary_type)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), secondary_type)
+View(poke_types)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+# Lecture 18 - Proportions 2
+# CSCI4210U
+#### 0. Setup workspace ####
+graphics.off()
+rm(list=ls())
+library(tidyverse)
+library(patchwork)
+#### 1. Fixing common issues ####
+d <- tibble(Area = c("Statistics", "Design", "Business", "Cartography",
+"Information Science", "Web Analytics", "Programming",
+"Engineering", "Mathematics", "Other"),
+Votes = c(172, 136, 135, 101, 80, 68, 50, 29, 19, 41)) |>
+mutate(VotesScaled = Votes/sum(Votes)*100,
+Area = factor(Area, levels = (Area)))
+# Sorted with alpha transparency
+ggplot(d, aes(x="", y = VotesScaled, fill = Area, alpha = VotesScaled)) +
+geom_bar(width = 1, stat = "identity") +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+guides(alpha=FALSE)
+# Improved pie chart
+ggplot(d, aes(x="", y = VotesScaled, alpha = VotesScaled)) +
+geom_bar(width = 1, stat = "identity", fill = "#61041D", color = "aliceblue",
+linewidth = 0.25) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL)
+# Coding challenge 1
+d <- d |>
+mutate(pal_alpha = alpha("#61041D", seq(1, 0.2, length = n())))
+pal_alpha <- scales::alpha("#61041D", seq(1, 0.2, length = nrow(d)))
+# Final plot
+ggplot(d, aes(x="", y = VotesScaled, fill = Area)) +
+geom_bar(width = 1, stat = "identity", color = "aliceblue", linewidth = 0.25) +
+coord_polar(theta ="y", direction = -1) +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = d$pal_alpha)
+#### 2. Proportion timeseries ####
+install.packages('gcookbook')
+data(uspopage, package = 'gcookbook')
+# Inspect data
+glimpse(uspopage)
+# Stacked proportion timeseries
+ggplot(uspopage, aes(x = Year, y = Thousands, fill = AgeGroup)) +
+geom_area()
+uspopage <- as_tibble(uspopage)
+# Coding challenge 2
+uspopage |>
+ggplot(aes(x = Year, y = Thousands, fill = AgeGroup)) +
+geom_area(colour = "black", linewidth = .2) +
+scale_fill_brewer(palette="Blues") +
+guides(fill = guide_legend(reverse = TRUE))
+# Scale data
+uspopage |>
+group_by(Year) |>
+mutate(Thousands = Thousands/sum(Thousands)) |>
+ggplot(aes(x = Year, y = Thousands, fill = AgeGroup)) +
+geom_area(colour = "black", linewidth = .2) +
+scale_fill_brewer(palette="Blues") +
+guides(fill = guide_legend(reverse = TRUE))
+data1 <- mutate(poke_types %>% group_by(type=='dragon') %>% summarise(st_freq = sum(secondary_type)))
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+# Analysis on All Generations of Pokemon
+# Maia Johnson
+# 100739773
+# April 2nd, 2023
+# Pokemon is a show that originated in Japan and gained popularity around the world.
+# The selected dataset includes the stats for pokemon from pokedex index 1 - 890.
+# The dataset was retrieved from: https://www.kaggle.com/datasets/igorcoelho24/pokemon-all-generations
+map_packages <- c("sf", "maps", "mapdata")
+install.packages(map_packages)
+library(tidyverse)
+library(readxl)
+#library(patchwork)
+library(maps)
+library(mapdata)
+library(ggthemes)
+library(sf)
+# The first graphic is of the population under 15 years on in different Prefectures of Japan.
+# Since Pokemon is geared towards children in this age range, this map graphic seemed
+# fitting. The population statistics were retrieved from Japan's stat.go site:
+# https://www.e-stat.go.jp/en/stat-search/files?stat_infid=000040019815
+jap_data <- st_as_sf(map('japan', plot = FALSE, fill = TRUE, group = TRUE)) |> rename ('Prefecture' = 'ID')
+pref_data <- read_xlsx('Japan_Prefecture_Population_2021.xlsx')
+full_japan_data <- left_join(jap_data, pref_data, join_by(Prefecture)) |> as_tibble()
+jap_pop_map <- ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(size=16))
+jap_pop_map
+# The rest of the graphics will involve data from the Pokemon datasets. The first
+# graphic will be making a comparison between the type, speed, and weight of different
+# Pokemon. By comparing these 3 things you can see that: on average more Pokemon weigh
+# more than 500, and the speed and weights of Pokemon are not directly related
+pokemon_data <- read.csv('Pokemon_full.csv') |> rename ('secondary_type' = 'secundary.type')
+tsw <- select(pokemon_data, type, speed, weight)
+final_table1 <- mutate(tsw %>% group_by(type) %>% summarise(avg_speed = mean(speed, na.rm=TRUE),
+avg_weight = mean(weight, na.rm=TRUE)),
+over_500 = if_else(avg_weight > 500, '>500', '<500'))
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+# The next graphic will display the amount of dragon Pokemon that have a
+# secondary type and what those types are. This will be done in the form of a pie chart.
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(type=='dragon'))
+legend_labels = tibble(Secondary_Types = data1$secodary_type)
+install.packages(map_packages)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+jap_data <- st_as_sf(map('japan', plot = FALSE, fill = TRUE, group = TRUE)) |> rename ('Prefecture' = 'ID')
+library(tidyverse)
+library(readxl)
+#library(patchwork)
+library(maps)
+library(mapdata)
+library(ggthemes)
+library(sf)
+# The first graphic is of the population under 15 years on in different Prefectures of Japan.
+# Since Pokemon is geared towards children in this age range, this map graphic seemed
+# fitting. The population statistics were retrieved from Japan's stat.go site:
+# https://www.e-stat.go.jp/en/stat-search/files?stat_infid=000040019815
+jap_data <- st_as_sf(map('japan', plot = FALSE, fill = TRUE, group = TRUE)) |> rename ('Prefecture' = 'ID')
+pref_data <- read_xlsx('Japan_Prefecture_Population_2021.xlsx')
+full_japan_data <- left_join(jap_data, pref_data, join_by(Prefecture)) |> as_tibble()
+jap_pop_map <- ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(size=16))
+jap_pop_map
+# The rest of the graphics will involve data from the Pokemon datasets. The first
+# graphic will be making a comparison between the type, speed, and weight of different
+# Pokemon. By comparing these 3 things you can see that: on average more Pokemon weigh
+# more than 500, and the speed and weights of Pokemon are not directly related
+pokemon_data <- read.csv('Pokemon_full.csv') |> rename ('secondary_type' = 'secundary.type')
+tsw <- select(pokemon_data, type, speed, weight)
+final_table1 <- mutate(tsw %>% group_by(type) %>% summarise(avg_speed = mean(speed, na.rm=TRUE),
+avg_weight = mean(weight, na.rm=TRUE)),
+over_500 = if_else(avg_weight > 500, '>500', '<500'))
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+# The next graphic will display the amount of dragon Pokemon that have a
+# secondary type and what those types are. This will be done in the form of a pie chart.
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(type=='dragon'))
+legend_labels = tibble(Secondary_Types = data1$secodary_type)
+legend_labels = tibble(Secondary_Types = data1$secondary_type)
+View(legend_labels)
+legend_labels = tibble(Secondary_Types = data1$distinct(secondary_type))
+legend_labels = tibble(Secondary_Types = distinct(data1$secondary_type))
+View(final_table1)
+legend_labels = tibble(Secondary_Types = data1 %>% group_by(secondary_type))
+View(legend_labels)
+View(poke_types)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(secondary_type))
+View(data1)
+??summarise
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise())
+View(data1)
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise(total = n()))
+View(d)
+View(d)
+ggplot(d, aes(x="", y = VotesScaled, alpha = VotesScaled)) +
+geom_bar(width = 1, stat = "identity", fill = "#61041D", color = "aliceblue",
+linewidth = 0.25) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL)
+ggplot(d, aes(x="", y = VotesScaled, fill = Area, alpha = VotesScaled)) +
+geom_bar(width = 1, stat = "identity") +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+guides(alpha=FALSE)
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise(total = n()))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))))
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise(total = n()))
+final_table2 = tibble(Secondary_Types = c(data1$secondary_type),
+Amounts = c(data1$total) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))))
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise(total = n()))
+final_table2 = tibble(Secondary_Types = c(data1$secondary_type),
+Amounts = c(data1$total) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))))
+# secondary type and what those types are. This will be done in the form of a pie chart.
+poke_types <- select(pokemon_data %>% filter(type=='dragon'), type, secondary_type)
+data1 <- mutate(poke_types %>% group_by(secondary_type) %>% summarise(total = n()))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total )
+View(final_table2)
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total ) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types)))
+View(final_table2)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types,
+alpha = Amounts_scaled)) +
+geom_bar(width = 1, stat = "identity", fill = "turquoise", color = "seashell",
+linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types,
+alpha = Amounts_scaled)) +
+geom_bar(width = 1, stat = "identity", fill = "paleturquoise3", color = "seashell",
+linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL)
+ggplot(d, aes(x="", y = VotesScaled, fill = Area)) +
+geom_bar(width = 1, stat = "identity", color = "aliceblue", linewidth = 0.25) +
+coord_polar(theta ="y", direction = -1) +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = d$pal_alpha)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", fill = "paleturquoise3", color = "seashell",
+linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL)
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total ) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types)),
+pal_alpha = alpha("paleturquoise3", seq(1, 0.2, length = n()))) |>
+pal_alpha <- scales::alphaalpha("paleturquoise3", seq(1, 0.2, length = nrow(final_table2)))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total ) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types)),
+pal_alpha = alpha("paleturquoise3", seq(1, 0.2, length = n())))
+pal_alpha <- scales::alphaalpha("paleturquoise3", seq(1, 0.2, length = nrow(final_table2)))
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total ) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types)),
+pal_alpha = alpha("paleturquoise3", seq(1, 0.2, length = n())))
+pal_alpha <- scales::alpha("paleturquoise3", seq(1, 0.2, length = nrow(final_table2)))
+View(final_table2)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", fill = "paleturquoise3", color = "seashell",
+linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha)
+final_table2 = tibble(Secondary_Types = data1$secondary_type,
+Amounts = data1$total ) |> mutate(Amounts_scaled = Amounts/sum(Amounts)*100,
+Secondary_Types = factor(Secondary_Types, levels = (Secondary_Types))) |>
+mutate(pal_alpha = alpha("paleturquoise3", seq(1, 0.2, length = n())))
+pal_alpha <- scales::alpha("paleturquoise3", seq(1, 0.2, length = nrow(final_table2)))
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", fill = "paleturquoise3", color = "seashell",
+linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha)
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha) +
+labs(title = 'Dragon Type Pokemon\'s Secondary Types',
+fill = 'Secondary Type') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"))
+ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha) +
+labs(title = 'Dragon Type Pokemon\'s Secondary Types',
+fill = 'Secondary Type') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 0),
+legend.title = element_text(face="bold"))
+jap_pop_map
+ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(size=16))
+jap_pop_map <- ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"),
+plot.title = element_text(size=16))
+jap_pop_map <- ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(size=16, face = "bold.italic", colour = "black", hjust = 1),
+legend.title = element_text(face="bold"))
+jap_pop_map
+jap_pop_map <- ggplot() +
+geom_sf(data = jap_data, aes(fill = full_japan_data$Pop_u_15), color = 'white') +
+scale_fill_gradient2(low = scales::muted('white'),
+mid = 'seashell',
+high = scales::muted('pink'),
+midpoint = median(full_japan_data$Pop_u_15),
+name = 'Population') +
+coord_sf(crs = st_crs(4326)) +
+labs(fill = 'Population Under 15 Yrs Old',
+title = 'Population of Youth Under 15 Across Japan') +
+theme_map() +
+guides(fill = guide_legend(nrow = 1)) +
+theme(legend.position = "right",
+plot.title = element_text(size=16, face = "bold.italic", colour = "black", hjust = 0),
+legend.title = element_text(face="bold"))
+jap_pop_map
+ggplot(final_table1, aes(x = type, y = avg_speed, fill = factor(over_500))) +
+geom_bar(stat = 'identity') +
+labs(x = 'Pokemon Type', y = 'Speed',
+colour = 'Weight',
+title = 'Pokemon Speeds in Comparison with Type and Weight',
+fill = 'Weight') +
+theme_bw() +
+theme(
+plot.title = element_text(size=16, face = "bold.italic", colour = "black", hjust = 0),
+legend.title = element_text(face="bold"),
+axis.text.x.bottom = element_text(face = "bold", angle = -60, margin = margin(b=10))
+)
+pal_alpha <- scales::alpha("paleturquoise3", seq(1, 0.2, length = nrow(final_table2)))
+dragon_types <- ggplot(final_table2, aes(x = '', y = Amounts_scaled, fill = Secondary_Types)) +
+geom_bar(width = 1, stat = "identity", color = "seashell", linewidth = 0.5) +
+coord_polar(theta ="y") +
+xlab(NULL) +
+ylab(NULL) +
+scale_fill_manual(values = final_table2$pal_alpha) +
+labs(title = 'Dragon Type Pokemon\'s Secondary Types',
+fill = 'Secondary Type') +
+theme_bw() +
+theme(
+plot.title = element_text(face = "bold.italic", colour = "black", hjust = 0),
+legend.title = element_text(face="bold"))
+dragon_types
